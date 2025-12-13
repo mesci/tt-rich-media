@@ -49,6 +49,8 @@ export default async function handler(req, res) {
           type: 'photo',
           id: '1',
           photo_url: imageUrl,
+          photo_width: 1200,
+          photo_height: 630,
           thumb_url: thumbUrl,
           caption: `<b>I'm playing TapTopia and it's getting addictive.</b>\n\nJoin me using my link and kick things off with bonus Sparks`,
           parse_mode: 'HTML',
@@ -66,7 +68,7 @@ export default async function handler(req, res) {
       ];
 
       await bot.answerInlineQuery(inline_query.id, results, {
-        cache_time: 300,
+        cache_time: 0,
         is_personal: true
       });
     }

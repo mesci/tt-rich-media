@@ -3,6 +3,9 @@
 type TelegramWebApp = {
   switchInlineQuery: (query: string, chooseChat?: string[]) => void
   openTelegramLink: (url: string) => void
+  shareMessage: (message: string, callback?: () => void) => void
+  shareToStory?: (mediaUrl: string, params?: any) => void
+  openLink: (url: string) => void
 }
 
 interface InviteButtonProps {

@@ -17,7 +17,7 @@ type TelegramWebApp = {
   expand: () => void
   switchInlineQuery: (query: string, chooseChat?: string[]) => void
   openTelegramLink: (url: string) => void
-  shareMessage: (message: string, callback?: () => void) => void
+  shareMessage: (preparedMessageId: string, callback?: (success: boolean) => void) => void
   openLink: (url: string) => void
   shareToStory?: (mediaUrl: string, params?: any) => void
   showPopup?: (params: any) => void

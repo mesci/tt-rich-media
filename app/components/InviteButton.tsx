@@ -6,6 +6,13 @@ type TelegramWebApp = {
   openLink: (url: string) => void
   showPopup?: (params: any) => void
   sendData?: (data: string) => void
+  shareMessage?: (preparedMessageId: string, callback?: (success: boolean) => void) => void
+  initDataUnsafe: {
+    user?: {
+      id: number
+      first_name?: string
+    }
+  }
 }
 
 interface InviteButtonProps {
@@ -15,17 +22,43 @@ interface InviteButtonProps {
 }
 
 export default function InviteButton({ tg, referralCode, botUsername = 'taptopia_referral_bot' }: InviteButtonProps) {
-  const handleInvite = () => {
+  const handleInvite = async () => {
     if (!tg) {
       alert('Please open this app in Telegram')
       return
     }
 
-    try {
-      tg.switchInlineQuery(referralCode, ['users', 'groups', 'channels'])
-    } catch (error) {
-      const fallbackUrl = `https://t.me/${botUsername}?start=${referralCode}`
-      tg.openTelegramLink(fallbackUrl)
+    if (tg.shareMessage && tg.initDataUnsafe?.user?.id) {
+      try {
+        const response = await fetch('/api/prepare-message', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: tg.initDataUnsafe.user.id,
+            referralCode: referralCode
+          })
+        });
+
+        const data = await response.json();
+        
+        if (data.preparedMessageId) {
+          tg.shareMessage(data.preparedMessageId, (success) => {
+            if (success) {
+              console.log('Message shared successfully!');
+            }
+          });
+        } else {
+          console.error('Failed to get prepared message ID');
+          tg.switchInlineQuery(referralCode, ['users', 'groups', 'channels']);
+        }
+      } catch (error) {
+        console.error('Error preparing message:', error);
+        tg.switchInlineQuery(referralCode, ['users', 'groups', 'channels']);
+      }
+    } else {
+      tg.switchInlineQuery(referralCode, ['users', 'groups', 'channels']);
     }
   }
 

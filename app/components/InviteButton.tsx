@@ -3,9 +3,11 @@
 type TelegramWebApp = {
   switchInlineQuery: (query: string, chooseChat?: string[]) => void
   openTelegramLink: (url: string) => void
-  shareMessage: (message: string, callback?: () => void) => void
+  shareMessage?: (message: string, callback?: () => void) => void
   shareToStory?: (mediaUrl: string, params?: any) => void
   openLink: (url: string) => void
+  showPopup?: (params: any) => void
+  requestContact?: (callback: (status: boolean) => void) => void
 }
 
 interface InviteButtonProps {
@@ -21,11 +23,18 @@ export default function InviteButton({ tg, referralCode, botUsername = 'taptopia
       return
     }
 
+    const shareUrl = `https://t.me/${botUsername}?startapp=${referralCode}`
+    const shareText = `I'm playing TapTopia and it's getting addictive.\n\nJoin me using my link and kick things off with bonus Sparks\n\n${shareUrl}`
+    
     try {
-      tg.switchInlineQuery(referralCode, ['users', 'groups', 'channels'])
+      const url = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`
+      if (tg.openLink) {
+        tg.openLink(url)
+      } else {
+        tg.openTelegramLink(url)
+      }
     } catch (error) {
-      const fallbackUrl = `https://t.me/${botUsername}?start=${referralCode}`
-      tg.openTelegramLink(fallbackUrl)
+      tg.switchInlineQuery(referralCode, ['users', 'groups', 'channels'])
     }
   }
 

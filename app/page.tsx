@@ -19,6 +19,8 @@ type TelegramWebApp = {
   openTelegramLink: (url: string) => void
   shareMessage: (message: string, callback?: () => void) => void
   openLink: (url: string) => void
+  shareToStory?: (mediaUrl: string, params?: any) => void
+  showPopup?: (params: any) => void
 }
 
 declare global {

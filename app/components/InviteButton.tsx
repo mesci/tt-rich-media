@@ -3,11 +3,9 @@
 type TelegramWebApp = {
   switchInlineQuery: (query: string, chooseChat?: string[]) => void
   openTelegramLink: (url: string) => void
-  shareMessage?: (message: string, callback?: () => void) => void
-  shareToStory?: (mediaUrl: string, params?: any) => void
   openLink: (url: string) => void
   showPopup?: (params: any) => void
-  requestContact?: (callback: (status: boolean) => void) => void
+  sendData?: (data: string) => void
 }
 
 interface InviteButtonProps {
@@ -23,15 +21,22 @@ export default function InviteButton({ tg, referralCode, botUsername = 'taptopia
       return
     }
 
-    const shareUrl = `https://t.me/${botUsername}?startapp=${referralCode}`
-    const shareText = `I'm playing TapTopia and it's getting addictive.\n\nJoin me using my link and kick things off with bonus Sparks\n\n${shareUrl}`
+    const inviteUrl = `https://t.me/${botUsername}?start=${referralCode}`
+    const message = `🎮 I'm playing TapTopia and it's getting addictive.\n\nJoin me using my link and kick things off with bonus Sparks\n\n${inviteUrl}`
     
     try {
-      const url = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`
-      if (tg.openLink) {
-        tg.openLink(url)
+      const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(inviteUrl)}&text=${encodeURIComponent(message)}`
+      
+      if (typeof (window as any).Telegram !== 'undefined' && (window as any).Telegram.WebApp) {
+        const webApp = (window as any).Telegram.WebApp
+        
+        if (webApp.openTelegramLink) {
+          webApp.openTelegramLink(shareUrl)
+        } else {
+          window.open(shareUrl, '_blank')
+        }
       } else {
-        tg.openTelegramLink(url)
+        tg.switchInlineQuery(referralCode, ['users', 'groups', 'channels'])
       }
     } catch (error) {
       tg.switchInlineQuery(referralCode, ['users', 'groups', 'channels'])

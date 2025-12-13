@@ -59,7 +59,7 @@ export default async function handler(req, res) {
               [
                 {
                   text: 'Enter TapTopia Now!',
-                  url: referralLink
+                  url: `https://t.me/${process.env.BOT_USERNAME || 'taptopia_referral_bot'}?start=${referralCode}`
                 }
               ]
             ]

@@ -21,14 +21,11 @@ export default function InviteButton({ tg, referralCode, botUsername = 'taptopia
       return
     }
 
-    const inviteUrl = `https://t.me/${botUsername}?start=${referralCode}`
-    const message = `I'm playing TapTopia and it's getting addictive.\n\nJoin me using my link and kick things off with bonus Sparks`
-    
     try {
-      const tgShareUrl = `tg://msg_url?url=${encodeURIComponent(inviteUrl)}&text=${encodeURIComponent(message)}`
-      tg.openTelegramLink(tgShareUrl)
-    } catch (error) {
       tg.switchInlineQuery(referralCode, ['users', 'groups', 'channels'])
+    } catch (error) {
+      const fallbackUrl = `https://t.me/${botUsername}?start=${referralCode}`
+      tg.openTelegramLink(fallbackUrl)
     }
   }
 

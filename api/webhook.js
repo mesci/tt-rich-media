@@ -10,7 +10,7 @@ export default async function handler(req, res) {
 
   try {
     const bot = new TelegramBot(token);
-    const { message, inline_query } = req.body;
+    const { message, inline_query, web_app_data } = req.body;
 
     if (message) {
       const chatId = message.chat.id;
@@ -34,6 +34,10 @@ export default async function handler(req, res) {
           { reply_markup: keyboard }
         );
       }
+    }
+
+    if (web_app_data) {
+      console.log('Web App Data received:', web_app_data);
     }
 
     if (inline_query) {
